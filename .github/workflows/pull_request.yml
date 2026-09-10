@@ -1,0 +1,20 @@
+name: Validate docs
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      # Both validators are stdlib-only Python 3, so this repository needs no
+      # toolchain of its own -- python3 is preinstalled on ubuntu-latest.
+      - name: Validate skills
+        run: python3 scripts/validate_skills.py
+      - name: Validate specs
+        run: python3 scripts/validate_specs.py
