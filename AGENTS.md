@@ -6,8 +6,9 @@ Guidance for AI coding agents working in this repository.
 
 `rouvydev/nodatime.unity` re-packages **one upstream binary** — `NodaTime.dll`, the
 `netstandard2.0` build of [NodaTime](https://nodatime.org) 2.4.18 — as the Unity UPM package
-`rouvy.nodatime.unity`. There is no Rouvy source code here: four tracked files, one of which
-is the DLL. NodaTime is a date, time and time zone library used instead of `DateTime`.
+`rouvy.nodatime.unity`. There is no Rouvy source code here: the only non-documentation,
+non-tooling file tracked is the DLL itself. NodaTime is a date, time and time zone library
+used instead of `DateTime`.
 
 | | |
 |---|---|
@@ -59,9 +60,6 @@ making any claim about which build this is.
 
 Do not invent them, and do not copy them from a Rouvy service repository:
 
-- **No branch or commit-message convention is enforced.** The repository has two commits,
-  both from 2023-10-19, and **no pull request, tag or release** has ever been created. There
-  is nothing to infer a house style from.
 - **No tests, no build, no formatter, no linter.** There is nothing to compile: the only
   code here is a third-party binary. `python3 scripts/validate_skills.py` and
   `python3 scripts/validate_specs.py` are the only checks that run.

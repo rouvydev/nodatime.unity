@@ -9,13 +9,13 @@ against the `1.0.0` tarball on the GitHub npm registry.
 
 ## Intent
 
-This repository is a binary drop: four tracked files, one of which is `NodaTime.dll`. There
-is no project file, no `.csproj`, no manifest that records which upstream build the binary
-is, and no `.meta` file in git. Everything that makes the package reproducible — which
-upstream asset it is, which target framework, which time zone database it carries, and how
-the Unity `.meta` GUIDs come into existence — is knowable only by inspecting the binary and
-the release workflow. This spec writes it down so a future re-pack does not have to
-rediscover it.
+This repository is a binary drop: the only non-documentation, non-tooling file tracked is
+`NodaTime.dll`. There is no project file, no `.csproj`, no manifest that records which
+upstream build the binary is, and no `.meta` file in git. Everything that makes the package
+reproducible — which upstream asset it is, which target framework, which time zone database
+it carries, and how the Unity `.meta` GUIDs come into existence — is knowable only by
+inspecting the binary and the release workflow. This spec writes it down so a future re-pack
+does not have to rediscover it.
 
 ## Specification
 
@@ -35,7 +35,7 @@ rediscover it.
 1. **The binary is the unmodified upstream asset.** Its SHA-256 equals
    `lib/netstandard2.0/NodaTime.dll` inside the official `NodaTime 2.4.18` package on
    nuget.org, byte for byte. It also carries upstream's own build path in its debug
-   directory (`…\obj\Release\netstandard2.0\NodaTime.pdb`, from Jon Skeet's tzdb-update
+   directory (`…\obj\Release\netstandard2.0\NodaTime.pdb`, from Jon Skeet's tzdbupdate
    build tree), so it was never rebuilt or re-signed at Rouvy. **Never hand-edit, re-sign,
    IL-merge or strip it** — a re-pack replaces it wholesale.
 
@@ -127,12 +127,12 @@ Verifiable outcomes for a re-pack:
 - **The NodaTime API.** <https://nodatime.org/2.4.x/userguide/> is authoritative; this spec
   covers only which binary is vendored and how it is packaged.
 - **Whether to move to NodaTime 3.x.** 2.4.18 is one major version behind upstream (latest
-  on nuget.org is 3.3.3). That is a product decision with a consumer-side migration
-  attached, tracked separately from this packaging spec.
+  on nuget.org is 3.3.4, as of 2026-09-18). That is a product decision with a consumer-side
+  migration attached, tracked separately from this packaging spec.
 - **Managed code stripping.** The package ships no `link.xml` and no
-  `IUnityLinkerProcessor` callback, and no `link.xml` exists anywhere in the `rouvydev`
-  organisation, so there is nothing to specify. Note that a `link.xml` inside a
-  registry-resolved package would not be picked up by `UnityLinker` anyway — the sibling
+  `IUnityLinkerProcessor` callback, so there is nothing to specify for this package. Note
+  that a `link.xml` inside a registry-resolved package would not be picked up by
+  `UnityLinker` anyway — the sibling
   `rouvy-unity-zeroconf-package` documents that dead end and the editor-callback workaround.
   Embedded resources such as the tzdb blob are not removed by managed stripping; only unused
   code is.
@@ -140,8 +140,10 @@ Verifiable outcomes for a re-pack:
 ## Technical notes
 
 - **The Release workflow in this repository has never run.** The GitHub Actions API reports
-  `total_count: 0` for `rouvydev/nodatime.unity`, yet `rouvy.nodatime.unity@1.0.0` was
-  published on 2023-10-20 and its tarball does carry metagen-shaped `.meta` files. So the
+  `total_count: 0` runs **scoped to `release.yml` itself** — check that workflow's own run
+  history, not the repo-wide run count, which now includes an unrelated CI job (the doc
+  validator in `pull_request.yml`) and so no longer reads zero. Yet `rouvy.nodatime.unity@1.0.0`
+  was published on 2023-10-20 and its tarball does carry metagen-shaped `.meta` files. So the
   published artifact matches what `release.yml` would produce, but the workflow itself is
   **unproven in CI** — whoever runs it first for a re-pack should expect to debug it
   (`actions/checkout@v3` and `actions/setup-node@v3` with Node 16 are all well past their

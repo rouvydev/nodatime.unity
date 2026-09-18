@@ -79,10 +79,10 @@ the version chosen.
 
 ## What this repository has no answer for
 
-- **Managed code stripping.** No `link.xml`, no linker callback, nothing anywhere in the
-  organisation. If IL2CPP ever strips something NodaTime needs reflectively, the fix cannot
-  be a `link.xml` committed inside this package — `UnityLinker` does not read descriptors
-  from registry-resolved packages. See the spec's non-goals.
+- **Managed code stripping.** No `link.xml` and no linker callback in this package. If
+  IL2CPP ever strips something NodaTime needs reflectively, the fix cannot be a `link.xml`
+  committed inside this package — `UnityLinker` does not read descriptors from
+  registry-resolved packages. See the spec's non-goals.
 - **The plugin importer settings.** They come from a fixed template inside
   `rouvydev/metagen-gha`, identical for every DLL it processes, and cannot be tuned per
   package without committing a `.meta` (which the spec forbids) or changing the action.
