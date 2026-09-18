@@ -35,7 +35,7 @@ making any claim about which build this is.
 ├── .github/workflows/release.yml    # manual workflow_dispatch publish
 ├── specs/                           # one spec per subject, indexed by specs/README.md
 ├── scripts/                         # the two standard doc validators
-└── .claude/skills/                  # agent skills (see "Agent tooling")
+└── .claude/skills/                  # agent skills: repack-nodatime-version
 ```
 
 ## Rules that actually bite here
@@ -66,28 +66,3 @@ Do not invent them, and do not copy them from a Rouvy service repository:
 - **No `.gitignore`, no `LICENSE`, no `CHANGELOG`.** The missing `LICENSE`/`NOTICE` next to a
   publicly redistributed Apache-2.0 binary is recorded in the spec as an open question for a
   human, not something to fix on the way past.
-
-## Agent tooling
-
-Follows [`rouvydev/agent-setup-example`](https://github.com/rouvydev/agent-setup-example).
-
-- **Skills** live in `.claude/skills/`, one canonical copy. There is one:
-  `repack-nodatime-version`.
-- **Specs** live in `specs/`, indexed by [`specs/README.md`](specs/README.md).
-- **Validated in CI** by [`.github/workflows/pull_request.yml`](.github/workflows/pull_request.yml).
-  Run locally with `python3 scripts/validate_skills.py && python3 scripts/validate_specs.py`.
-- **No hook, and no per-harness adapters, deliberately.** A hook exists to run something
-  after every agent edit; this repository has nothing to run. There is no formatter, no
-  build and no test target, and the only editable files are Markdown and one `package.json`.
-  Under the standard that is a complete setup, not a gap — so `.claude/settings.json`,
-  `.codex/hooks.json`, `.cursor/hooks.json` and `.github/hooks/` are all absent on purpose.
-  All four adapters or none; three would be drift.
-- **Codex** does not read `.claude/skills/`. Link it locally and keep that out of git:
-
-  ```bash
-  mkdir -p .agents && ln -sfn ../.claude/skills .agents/skills
-  echo ".agents/" >> .git/info/exclude    # local-only, NOT .gitignore
-  ```
-
-  A committed second copy would make the skill appear twice in the Cursor and Copilot
-  pickers.
