@@ -6,7 +6,7 @@ description: Re-packs the vendored NodaTime.dll in rouvy.nodatime.unity onto a d
 # Re-pack the vendored NodaTime version
 
 This repository redistributes one upstream binary. Read
-`specs/VENDORED-NODATIME-ASSEMBLY.md` first — it holds the rules, the current hash, and the
+`specs/VENDORED_NODATIME_ASSEMBLY.md` first — it holds the rules, the current hash, and the
 reasons behind each step here. This skill is only the procedure.
 
 **A re-pack replaces the DLL wholesale.** Never hand-edit, re-sign or IL-merge it, and never

@@ -46,4 +46,4 @@ _Recommended — kept light; point at the authoritative source instead of restat
 
 _Recommended — upstream contracts, related specs, vendor docs._
 
-- Related spec: [`OTHER-SPEC.md`](OTHER-SPEC.md).
+- Related spec: [`OTHER_SPEC.md`](OTHER_SPEC.md).
