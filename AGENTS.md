@@ -20,7 +20,7 @@ used instead of `DateTime`.
 | Default branch | `master`. The repository is **public**. |
 
 All of that is verified and written down, with the commands that produced it, in
-[`specs/VENDORED-NODATIME-ASSEMBLY.md`](specs/VENDORED-NODATIME-ASSEMBLY.md). Read it before
+[`specs/VENDORED_NODATIME_ASSEMBLY.md`](specs/VENDORED_NODATIME_ASSEMBLY.md). Read it before
 making any claim about which build this is.
 
 ## The layout, all of it

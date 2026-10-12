@@ -5,15 +5,18 @@
 specs and are skipped.
 
 Required for every spec:
+- SCREAMING_SNAKE_CASE.md filename (letters, digits, underscores; a single
+  word such as `PACE.md` is fine)
 - `# Title` as the first heading, and not the template's `# Subject Title`
 - `## Intent` with non-empty body
 - `## Specification` with non-empty body (rules, fallbacks, contracts,
   operational constraints — not limited to client-facing behaviour)
+- no `specType:` dump format
 - no open `[NEEDS CLARIFICATION: …]` marker: it blocks the rule it sits on, so
   answer the question or drop that rule before the spec lands
-- a `**Scope:**` line, if present, is non-empty and paired with a non-empty
-  `**Last verified:**` line (whether a spec *needs* a Scope line at all is a
-  human call this script can't make — only its shape, once present)
+
+Required for the index: one ``[`NAME.md`](NAME.md)`` link per spec, no
+leftover or duplicate rows.
 
 Recommended (warn when missing):
 - `## User story`
@@ -23,8 +26,8 @@ Recommended (warn when missing):
 - `## References`
 
 Exit 0 when required sections pass; warnings go to stderr but do not fail.
-Exit 1 on required-section failures or when specs/README.md is stale in
-either direction (missing file or leftover index row).
+Exit 1 on required-section failures, missing specs, or when specs/README.md
+is stale in either direction (missing file or leftover index row).
 """
 
 from __future__ import annotations
@@ -39,12 +42,10 @@ NON_SPEC_FILES = frozenset({"README.md", "TEMPLATE.md"})
 README = SPECS_DIR / "README.md"
 HEADING_RE = re.compile(r"^## (.+)$", re.MULTILINE)
 TITLE_RE = re.compile(r"^# .+\s*$", re.MULTILINE)
-# This repo's specs are SCREAMING-KEBAB-CASE.md, not SCREAMING_SNAKE_CASE.md, and the
-# index link text may or may not be backtick-wrapped.
-INDEX_ENTRY_RE = re.compile(r"\[`?([A-Z0-9-]+\.md)`?\]\(\1\)")
+SPEC_NAME_RE = re.compile(r"^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*\.md$")
+INDEX_ENTRY_RE = re.compile(r"\[`([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*\.md)`\]\(\1\)")
 CLARIFICATION_RE = re.compile(r"\[NEEDS CLARIFICATION:([^\]\n]*)")
-SCOPE_RE = re.compile(r"^\*\*Scope:\*\*\s*(.*)$", re.MULTILINE)
-LAST_VERIFIED_RE = re.compile(r"^\*\*Last verified:\*\*\s*(.*)$", re.MULTILINE)
+SPEC_TYPE_RE = re.compile(r"^specType\s*:", re.MULTILINE)
 RECOMMENDED = ("User story", "Definition of done", "Technical notes", "Non-goals", "References")
 PLACEHOLDER_TITLE = "# Subject Title"
 
@@ -65,33 +66,22 @@ def first_heading(text: str) -> str | None:
     return match.group(0).strip() if match else None
 
 
-def validate_scope(text: str, path: Path) -> list[str]:
-    scope_match = SCOPE_RE.search(text)
-    if scope_match is None:
-        return []
-
-    errors: list[str] = []
-    if not scope_match.group(1).strip():
-        errors.append(
-            f"{path}: `**Scope:**` line is present but empty — name the owner and "
-            "authoritative source"
-        )
-
-    last_verified_match = LAST_VERIFIED_RE.search(text)
-    if last_verified_match is None or not last_verified_match.group(1).strip():
-        errors.append(
-            f"{path}: `**Scope:**` line needs a paired `**Last verified:**` line "
-            "(when, and against what)"
-        )
-
-    return errors
-
-
 def validate_spec(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
+    if SPEC_NAME_RE.fullmatch(path.name) is None:
+        errors.append(
+            f"{path}: filename must be SCREAMING_SNAKE_CASE.md (letters, digits, underscores)"
+        )
+
     text = path.read_text(encoding="utf-8")
     headings = HEADING_RE.findall(text)
+
+    if SPEC_TYPE_RE.search(text):
+        errors.append(
+            f"{path}: `specType:` frontmatter is not allowed; use `# Title`, "
+            "`## Intent`, and `## Specification`"
+        )
 
     heading = first_heading(text)
     if heading is None:
@@ -101,12 +91,10 @@ def validate_spec(path: Path) -> tuple[list[str], list[str]]:
     elif heading == PLACEHOLDER_TITLE:
         errors.append(f"{path}: title is still the template placeholder `{PLACEHOLDER_TITLE}`")
 
-    intent = section_body(text, "Intent")
-    if not intent:
+    if not section_body(text, "Intent"):
         errors.append(f"{path}: missing or empty `## Intent`")
 
-    specification = section_body(text, "Specification")
-    if not specification:
+    if not section_body(text, "Specification"):
         errors.append(f"{path}: missing or empty `## Specification`")
 
     for heading_name in RECOMMENDED:
@@ -120,8 +108,6 @@ def validate_spec(path: Path) -> tuple[list[str], list[str]]:
             f"{path}: open `[NEEDS CLARIFICATION:{question}]` — answer it, or drop the "
             "rule it blocks, before this lands"
         )
-
-    errors.extend(validate_scope(text, path))
 
     return errors, warnings
 
@@ -143,7 +129,7 @@ def validate_readme(spec_files: list[Path]) -> list[str]:
     indexed_set = set(indexed)
 
     for name in sorted(on_disk - indexed_set):
-        errors.append(f"{README}: does not mention `{name}`")
+        errors.append(f"{README}: does not mention `{name}` as [`{name}`]({name})")
     for name in sorted(indexed_set - on_disk):
         errors.append(f"{README}: stale index entry `{name}` (file is missing)")
 

@@ -9,4 +9,4 @@ One specification per subject.
 
 | Spec | Description |
 |------|-------------|
-| [VENDORED-NODATIME-ASSEMBLY.md](VENDORED-NODATIME-ASSEMBLY.md) | Which upstream `NodaTime.dll` this repository redistributes, the tzdb it carries, how the Unity `.meta` GUIDs are produced, and the rules for re-packing. Upstream-owned. |
+| [`VENDORED_NODATIME_ASSEMBLY.md`](VENDORED_NODATIME_ASSEMBLY.md) | Which upstream `NodaTime.dll` this repository redistributes, the tzdb it carries, how the Unity `.meta` GUIDs are produced, and the rules for re-packing. Upstream-owned. |
