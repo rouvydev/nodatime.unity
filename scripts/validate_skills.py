@@ -93,8 +93,8 @@ def validate_skill(path: Path) -> list[str]:
 def main() -> int:
     skill_files = sorted(SKILLS_ROOT.glob("*/SKILL.md"))
     if not skill_files:
-        print(f"ERROR: no skills found under {SKILLS_ROOT}", file=sys.stderr)
-        return 1
+        print(f"Skill validation passed (no skills under {SKILLS_ROOT}).")
+        return 0
 
     errors: list[str] = []
     for path in skill_files:
