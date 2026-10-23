@@ -4,8 +4,9 @@ One specification per subject.
 
 - Specs owned elsewhere open with a **Scope** line: owner, authoritative source.
 - Specs describe the present. Update in the PR that changes the thing.
-- Start a new spec by copying `TEMPLATE.md`. Validate locally with
-  `python3 scripts/validate_specs.py`.
+- Start a new spec by copying `TEMPLATE.md`. Specs are validated in CI by the
+  `validate-agent-setup` action of `rouvydev/agent-setup-example`; to run it locally, use
+  `python3 <agent-setup-example>/scripts/validate_specs.py --root .`.
 
 | Spec | Description |
 |------|-------------|

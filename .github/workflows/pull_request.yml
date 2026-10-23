@@ -11,10 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-      # Both validators are stdlib-only Python 3, so this repository needs no
-      # toolchain of its own -- python3 is preinstalled on ubuntu-latest.
-      - name: Validate skills
-        run: python3 scripts/validate_skills.py
-      - name: Validate specs
-        run: python3 scripts/validate_specs.py
+      - uses: actions/checkout@v7
+      # The skill and spec validators live in rouvydev/agent-setup-example and run on the
+      # runner's preinstalled python3, so this repository needs no toolchain of its own.
+      - uses: rouvydev/agent-setup-example/.github/actions/validate-agent-setup@master

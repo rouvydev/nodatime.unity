@@ -32,9 +32,10 @@ making any claim about which build this is.
 │   └── Runtime/
 │       └── NodaTime.2.4.18/         # directory name carries the upstream version
 │           └── NodaTime.dll         # vendored, never hand-edited
-├── .github/workflows/release.yml    # manual workflow_dispatch publish
+├── .github/workflows/
+│   ├── release.yml                  # manual workflow_dispatch publish
+│   └── pull_request.yml             # validates skills and specs on every pull request
 ├── specs/                           # one spec per subject, indexed by specs/README.md
-├── scripts/                         # the two standard doc validators
 └── .claude/skills/                  # agent skills: repack-nodatime-version
 ```
 
@@ -61,8 +62,11 @@ making any claim about which build this is.
 Do not invent them, and do not copy them from a Rouvy service repository:
 
 - **No tests, no build, no formatter, no linter.** There is nothing to compile: the only
-  code here is a third-party binary. `python3 scripts/validate_skills.py` and
-  `python3 scripts/validate_specs.py` are the only checks that run.
+  code here is a third-party binary. The only check is the agent-setup validation of
+  `.claude/skills/` and `specs/`, which CI runs on every pull request through the
+  `validate-agent-setup` action of `rouvydev/agent-setup-example`. To run it locally, use
+  that repository's validators: `python3 <agent-setup-example>/scripts/validate_skills.py --root .`
+  and `python3 <agent-setup-example>/scripts/validate_specs.py --root .`.
 - **No `.gitignore`, no `LICENSE`, no `CHANGELOG`.** The missing `LICENSE`/`NOTICE` next to a
   publicly redistributed Apache-2.0 binary is recorded in the spec as an open question for a
   human, not something to fix on the way past.
